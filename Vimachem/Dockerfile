@@ -1,6 +1,13 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy-amd64 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 5000
+EXPOSE 5001
+
+# Set environment variables
+ENV ASPNETCORE_ENVIRONMENT="Development"
+ENV ASPNETCORE_URLS="http://*:5000"
+ENV ASPNETCORE_HTTPS_PORTS=5001
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

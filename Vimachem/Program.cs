@@ -65,12 +65,15 @@ builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
 var app = builder.Build();
 
+
+app.UseSwagger();
+// TODO: Comment this and uncomment the bellow if you want to see versioning
+app.UseSwaggerUI();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    // TODO: Comment this and uncomment the bellow if you want to see versioning
-    app.UseSwaggerUI();
+    
     app.UseSwaggerUI(options =>
     {
         IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
@@ -81,6 +84,22 @@ if (app.Environment.IsDevelopment())
 
             options.SwaggerEndpoint(url, name);
         }
+        
+    });
+}
+else
+{   
+    app.UseSwaggerUI(options =>
+    {
+        IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
+        foreach (var apiVersionDescription in descriptions)
+        {
+            string url = $"/swagger/{apiVersionDescription.GroupName}/swagger.json";
+            string name = apiVersionDescription.GroupName.ToUpperInvariant();
+
+            options.SwaggerEndpoint(url, name);
+        }
+        options.RoutePrefix = "";
     });
 }
 
